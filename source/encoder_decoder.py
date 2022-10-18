@@ -420,6 +420,7 @@ def main():
     
     model = torch.load(args.out_dir + "/savemodel.pth")
     test_dataset = eval_dataset = EncoderDecoderTextDataset(tokenizer, args, file_path=args.test_path, block_size=args.block_size)
+    test_dataset.max_input_length = train_dataset.max_input_length
     model.to(args.device)
     test(test_dataset, args, model, tokenizer)
 

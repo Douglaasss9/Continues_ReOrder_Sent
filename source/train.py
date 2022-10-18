@@ -370,50 +370,55 @@ def perm(listVar):
     return retList
 
 def test(test_dataset, args, model, tokenizer):
-    perl = perm([1, 2, 3, 4, 5])
+
     continuescore = 0
     mapscore = 0
 
     logger.info(f"***** Running Test *****")
     logger.info(f"  Num examples = {len(test_dataset.recsent)}")
     for sten in tqdm(test_dataset.recsent):
-        countscore = []
-        for j in range(4):
-            sentin = torch.tensor([tokenizer.encode(
-                text = sten[j], text_pair = sten[j + 1], add_special_tokens=False, max_length=test_dataset.max_input_length, pad_to_max_length=True)], device = args.device)
-            sen1 = tokenizer.tokenize(sten[j])
-            sen2 = tokenizer.tokenize(sten[j + 1])
-            tx1 = 0
-            tx2 = 0
-            for j in sen1:
-                if j in sen1:
-                    tx1 += 1
-            for j in sen2:
-                if j in sen2:
-                    tx2 += 1
-            tokenin = torch.tensor([[tx1 * tx2]], device = args.device)
-            input_lengths = len(sen1) + len(sen2) + 3
-            input_mask = torch.tensor([[1] * input_lengths + [0] * (test_dataset.max_input_length - input_lengths)]).to(args.device)
-            scoretemp = model(sentin, input_mask, tokenin)[0]
-            countscore.append(scoretemp[0].item() - scoretemp[1].item())
-        
-        max = -1
-        maxcount = -1
-        for j in range(len(countscore)):
-            if countscore[j] > max:
-                max = countscore[j]
-                maxcount = j
-        
+        countorder = [0]
+        for i in range(4):
+            addnum = -1
+            addscore = -100
+            for p in range(5):
+                if p in countorder:
+                    continue
+ 
 
+                sentin = torch.tensor([tokenizer.encode(
+                    text = sten[countorder[-1]], text_pair = sten[p], add_special_tokens=False, max_length=test_dataset.max_input_length, pad_to_max_length=True)], device = args.device)
+                sen1 = tokenizer.tokenize(sten[countorder[-1]])
+                sen2 = tokenizer.tokenize(sten[p])
+                tx1 = 0
+                tx2 = 0
+                for j in sen1:
+                    if j in sen1:
+                        tx1 += 1
+                for j in sen2:
+                    if j in sen2:
+                        tx2 += 1
+                tokenin = torch.tensor([[tx1 * tx2]], device = args.device)
+                input_lengths = len(sen1) + len(sen2) + 3
+                input_mask = torch.tensor([[1] * input_lengths + [0] * (test_dataset.max_input_length - input_lengths)]).to(args.device)
+                scoretemp = model(sentin, input_mask, tokenin)[0]
+                score = scoretemp[0].item() - scoretemp[1].item()
+                if score > addscore:
+                    addscore = score
+                    addnum = p
+            countorder.append(addnum)
+
+
+        
         for i in range(5):
-            for j in range(5 - j - 1):
-                if perl[maxcount][i] < perl[maxcount][i + j + 1]:
+            for j in range(5 - i - 1):
+                if countorder[i] < countorder[i + j + 1]:
                     continuescore += 1
-        if perl[maxcount] == [1, 2, 3, 4, 5]:
+        if countorder == [0, 1, 2, 3, 4]:
                 mapscore += 1
 
-    logger.info(f"  Test_PMR@5 = {test_score / (5 * len(test_dataset.recsent))}")
-    logger.info(f"  Test_MAP@All = {mapscore / (len(test_dataset.recsent))}")
+    logger.info(f"  Test_Tau@5 = {100 * continuescore / (10 * len(test_dataset.recsent))}")
+    logger.info(f"  Test_PMR@All = {100 * mapscore / (len(test_dataset.recsent))}")
     return
         
 
