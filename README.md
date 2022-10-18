@@ -1,70 +1,32 @@
-## Is Everything in Order? A Simple Way to Order Sentences
+## Continues_ReOrder_Sent
 
-This repo contains code for the EMNLP 2021 paper:
+### Introduction
 
-**Is Everything in Order? A Simple Way to Order Sentences**
+* This Project are made for sentence reordering task, which use the same task setting as ReBART
+* There're differences from traditional reordering task like ReBART:
+  * We use MacBERT as our base model that MacBERT is pretrained under the enhanced-NSP task as BERT, which gives much help for us to gain a better model performance
+  * We use the Token-Overlap rate as an augment value for our prediction, since the Token-Overlap rate indicates the relationship between the two sentence.
+  * We use Continues Reordering task for our model training, which means we focus on the NSP task instead of predict the order at one time.
 
-*Somnath Basu Roy Chowdhury\*, Faeze Brahman\*, Snigdha Chaturvedi* EMNLP 2021
+### Data Preparation
 
-[Link to paper](https://arxiv.org/pdf/2104.07064.pdf)
+* We use the same dataset form as it is shown in ReBART(i.e. ROCstory)
+* The example of our dataset are shown as follows:
 
-### Pre-requisities
-
-Please create a fresh conda env and run:
-
-```
-pip install -r requirements.txt
-```
-
-### Datasets
-
-First, create the dataset splits and put them in `./data` folder.
-
-Please find the links for the various datasets: [arXiv](https://drive.google.com/drive/folders/0B-mnK8kniGAiNVB6WTQ4bmdyamc), [Wiki Movie Plots](https://www.kaggle.com/jrobischon/wikipedia-movie-plots), [SIND](http://visionandlanguage.net/VIST/dataset.html), [NSF](https://archive.ics.uci.edu/ml/datasets/NSF+Research+Award+Abstracts+1990-2003), [ROCStories](https://www.cs.rochester.edu/nlp/rocstories/), [NeurIPS](https://www.kaggle.com/benhamner/nips-papers), [AAN](https://github.com/EagleW/ACL_titles_abstracts_dataset).
-
-All datsets should be formatted in jsonl files where each line is a json containing two fields: `orig_sents`, and `shuf_sents`. `orig_sents` is a list of markers [y1, y2, ..., yN], which denotes the position of ith sentence of the corresponding ordered sequence in the shuffled input (`shuf_sents`). An example is provided for ROCStories in [here](https://drive.google.com/drive/folders/1bY7CvXF1q2kgpmtXWtD0NT3bFRfLHpV1?usp=sharing).
-
-### Train the ReBART model:
-
-To train the ReBART model run the following command:
-
-```
-bash train_rebart.sh
-```
-You can specify the hyper-parameters inside the bash script.
-
-### Generate
-
-To generate the outputs (position markers) using the trained model, run the following commands:
-
-```
-export DATA_DIR="data/arxiv-abs"
-export MODEL_PATH="outputs/reorder_exp/bart-large_arxiv"
-python source/generate.py --in_file $DATA_DIR/test.jsonl --out_file $MODEL_PATH/test_bart_greedy.jsonl --model_name_or_path $MODEL_PATH --beams 1 --max_length 40 --task index_with_sep --device 0
+```json
+{"orig_sents": ["0", "4", "2", "1", "3"], "shuf_sents": ["我订购了电脑零件。","我打开了门。","门铃响了。","联邦快递的人让我签收零件。","联邦快递的今天到了。"]}
+{"orig_sents": ["0", "3", "2", "4", "1"], "shuf_sents": ["艾莉是一名四年级学生,在数学方面有困难。","艾莉那年的数学成绩获得了85分。","她的妈妈每天都会和她一起做数学抽认卡。","艾莉开始使用抽认卡。","很快,艾莉对数学的信心增强了。"]}
 ```
 
-### Evaluate
-
-To evaluate the model and get the performance metrics, run:
-
-```
-python eval/evaluation.py --output_path $MODEL_PATH/test_bart_greedy.jsonl
-```
+* We do not provide dataset downloading method, which means you may need to make your dataset by your own.
 
 
-### Citation
 
-If you used our work please cite us using:
+### Run
 
-```
-@inproceedings{Basu-brahman-chaturvedi-rebart,
-    title = "Is Everything in Order? A Simple Way to Order Sentences",
-    author = "Somnath Basu Roy Chowdhury, Faeze Brahman and
-      Snigdha Chaturvedi",
-    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing (EMNLP)",
-    month = nov,
-    year = "2021",
-    publisher = "Association for Computational Linguistics",
-}
+* For running, we provide a bash command:
+
+```shell
+bash ./train.sh
 ```
 
