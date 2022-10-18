@@ -405,14 +405,15 @@ def test(test_dataset, args, model, tokenizer):
                 maxcount = j
         
 
-        for j in range(4):
-            if perl[maxcount][j + 1] == perl[maxcount][j] + 1:
-                continuescore += 1
+        for i in range(5):
+            for j in range(5 - j - 1):
+                if perl[maxcount][i] < perl[maxcount][i + j + 1]:
+                    continuescore += 1
         if perl[maxcount] == [1, 2, 3, 4, 5]:
                 mapscore += 1
 
-    logger.info(f"  Test_Continue@5 = {test_score / (5 * len(test_dataset.recsent))}")
-    logger.info(f"  Test_Continue@All = {mapscore / (len(test_dataset.recsent))}")
+    logger.info(f"  Test_PMR@5 = {test_score / (5 * len(test_dataset.recsent))}")
+    logger.info(f"  Test_MAP@All = {mapscore / (len(test_dataset.recsent))}")
     return
         
 
