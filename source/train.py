@@ -380,7 +380,7 @@ def test(test_dataset, args, model, tokenizer):
         countorder = [0]
         for i in range(4):
             addnum = -1
-            addscore = -100
+            addscore = -10000
             for p in range(5):
                 if p in countorder:
                     continue
