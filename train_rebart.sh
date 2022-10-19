@@ -10,7 +10,7 @@ cp $0 ${OUT_DIR}
 python -m source.encoder_decoder \
     --train_file ${DATA_DIR}/data_100.jsonl \
     --eval_data_file ${DATA_DIR}/data_100.jsonl \
-    --test_path ${DATA_DIR}/data_100.jsonl \
+    --test_path ${DATA_DIR}/data_test.jsonl \
     --out_dir $OUT_DIR \
     --model_type hfl/chinese-macbert-large \
     --model_name_or_path hfl/chinese-macbert-large \
@@ -18,7 +18,7 @@ python -m source.encoder_decoder \
     --do_train \
     --do_eval \
     --save_total_limit 1 \
-    --num_train_epochs 10 \
+    --num_train_epochs 1 \
     --logging_steps 3000 \
     --gradient_accumulation_steps 8 \
     --train_batch_size 4 \

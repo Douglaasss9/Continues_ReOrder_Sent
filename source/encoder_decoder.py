@@ -45,7 +45,6 @@ class EncoderDecoderTextDataset(Dataset):
             logger.info(examples[:5])
 
 
-
             # Add prefix to the output so we can predict the first real token in the decoder
             inputs = [
                 [tokenizer.convert_tokens_to_ids(tokenizer.tokenize(ex[0])), tokenizer.convert_tokens_to_ids(tokenizer.tokenize(ex[1]))]
@@ -53,7 +52,9 @@ class EncoderDecoderTextDataset(Dataset):
             ]
 
             inputval = []
-
+            # for i in range(len(examples)):
+            #     print(examples[i][0], examples[i][1])
+            #     print(len(inputs[i][0]), len(inputs[i][1]))
             for ex in inputs:
                 tx1 = 0
                 tx2 = 0
@@ -420,7 +421,7 @@ def main():
     
     model = torch.load(args.out_dir + "/savemodel.pth")
     test_dataset = eval_dataset = EncoderDecoderTextDataset(tokenizer, args, file_path=args.test_path, block_size=args.block_size)
-    test_dataset.max_input_length = train_dataset.max_input_length
+    # test_dataset.max_input_length = train_dataset.max_input_length
     model.to(args.device)
     test(test_dataset, args, model, tokenizer)
 

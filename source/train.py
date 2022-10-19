@@ -384,12 +384,16 @@ def test(test_dataset, args, model, tokenizer):
             for p in range(5):
                 if p in countorder:
                     continue
- 
+                sen1 = tokenizer.tokenize(sten[countorder[-1]])
+
+                sen2 = tokenizer.tokenize(sten[p])
+                input_lengths = len(sen1) + len(sen2) + 3
+
 
                 sentin = torch.tensor([tokenizer.encode(
-                    text = sten[countorder[-1]], text_pair = sten[p], add_special_tokens=False, max_length=test_dataset.max_input_length, pad_to_max_length=True)], device = args.device)
-                sen1 = tokenizer.tokenize(sten[countorder[-1]])
-                sen2 = tokenizer.tokenize(sten[p])
+                    text = sten[countorder[-1]], text_pair = sten[p], add_special_tokens=False, max_length=input_lengths, pad_to_max_length=True)], device = args.device)
+
+
                 tx1 = 0
                 tx2 = 0
                 for j in sen1:
@@ -399,8 +403,9 @@ def test(test_dataset, args, model, tokenizer):
                     if j in sen2:
                         tx2 += 1
                 tokenin = torch.tensor([[tx1 * tx2]], device = args.device)
-                input_lengths = len(sen1) + len(sen2) + 3
-                input_mask = torch.tensor([[1] * input_lengths + [0] * (test_dataset.max_input_length - input_lengths)]).to(args.device)
+                
+                input_mask = torch.tensor([[1] * input_lengths]).to(args.device)
+
                 scoretemp = model(sentin, input_mask, tokenin)[0]
                 score = scoretemp[0].item() - scoretemp[1].item()
                 if score > addscore:
