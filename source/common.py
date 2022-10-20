@@ -3,18 +3,32 @@ import json
 import pandas as pd
 import torch
 import torch.nn as nn
-from transformers import AutoModelForNextSentencePrediction, AutoTokenizer
+from transformers import AutoModelForNextSentencePrediction, AutoTokenizer, AutoModel
 
+
+# class RankModel(nn.Module):
+#     def __init__(self, model_name):
+#         super(RankModel, self).__init__()
+#         self.model = AutoModelForNextSentencePrediction.from_pretrained(model_name, output_hidden_states=True)
+#         self.fc = nn.Linear(3, 2)
+
+#     def forward(self, x, input_mask, tokenval):
+
+#         x = self.model(x, attention_mask= input_mask).logits
+
+        
+#         x = torch.cat([x, tokenval], dim = 1)
+#         return self.fc(x)
 
 class RankModel(nn.Module):
     def __init__(self, model_name):
         super(RankModel, self).__init__()
-        self.model = AutoModelForNextSentencePrediction.from_pretrained(model_name, output_hidden_states=True)
-        self.fc = nn.Linear(3, 2)
+        self.model = AutoModel.from_pretrained(model_name, output_hidden_states=True)
+        self.fc = nn.Linear(769, 2)
 
     def forward(self, x, input_mask, tokenval):
 
-        x = self.model(x, attention_mask= input_mask).logits
+        x = self.model(x, attention_mask= input_mask).last_hidden_state[:, 0, :]
 
         
         x = torch.cat([x, tokenval], dim = 1)
