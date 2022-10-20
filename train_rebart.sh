@@ -12,8 +12,8 @@ python -m source.encoder_decoder \
     --eval_data_file ${DATA_DIR}/data_100.jsonl \
     --test_path ${DATA_DIR}/data_test.jsonl \
     --out_dir $OUT_DIR \
-    --model_type hfl/chinese-macbert-large \
-    --model_name_or_path hfl/chinese-macbert-large \
+    --model_type hfl/chinese-xlnet-base \
+    --model_name_or_path hfl/chinese-xlnet-base \
     --device 0 \
     --do_train \
     --do_eval \
